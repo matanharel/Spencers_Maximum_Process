@@ -1,0 +1,241 @@
+[Introduction]
+Git is a version control system for code (C Code, latex file, whatever). It allows other people to collaborate on a project. It keeps track of who made what changes, allows you to test ideas and much much more.
+
+Github is a site on which code repositories can be shared for free. To begin:
+1) Start here with a tutorial http://help.github.com/ and create an account by following the instructions in "Setup Git". This just allows you to use github.
+2) Now we must collaborate on code. This is how it works:
+There is one remote master copy of the latex file on github.com. You can make a local copy on your harddisk and modify it. Then you must "push" your changes to the remote repository; i.e., github.com. 
+3) To give you access to the remote repository that I have created, do the following: once you've created the SSH keys, and added your public key to your account, please send me your public key so I can give you direct access to the repository. Once I've added your public key, you have remote access to the code. Note that currently creating ssh keys is problematic on office machines in cims. Go to access.cims.nyu.edu and create your ssh keys there.
+2) Once you have done this, go to http://help.github.com/ again and read "Fork a Repo". The repository that you will have to clone is github.com:arjunk/Varadhan_Probability_Notes with
+    git clone git@github.com:arjunk/Varadhan_Probability_Notes
+and a new directory will have been created in your current directory. 
+Move to it, create a tex file called "chapter1.tex" and edit away. Once you're done, you MUST send it back to the remote repository that you'll have access to. 
+
+To learn more about git (there's a lot you can do with it), please read the following notes:
+
+[git] 
+
+This is a great book:
+http://progit.org/book/ch3-1.html
+The link is to chapter 3, which is about branching and explains it quite
+nicely. Also added the file to docs. I'll make references to the book using
+(chap-section) e.g., (3-2).
+
+* [basic commands] [command list]
+git add filename	adds file to repository
+git rm filename		removes file from repository
+git status		checks for changes
+git commit -a -m "msg"	commits changes for everything and include a message
+git push (-f)		pushes all files to repository; -f forces the push
+git fetch		gets files from repository
+git clone		clones repository --command must be made inside directory where you want the clone
+
+* [help]
+	git help <command>
+always works.
+
+* [ignore]
+Include a file called .gitignore with patterns like
+	# Ignore itself
+	.gitignore
+	# Compiles files
+	*.[oa]
+	*~
+	# Editor OS files
+	*.swp
+To include a global ignore file, you need to add to your config gile
+	git config --global core.excludesfile ~/.gitignore
+
+* [branches]
+The most important part of git is branches. 
+	git branches -v
+lists all branches and the current HEAD (the pointer to which commit under
+which branch is currently active) is listed with an asterix.
+	git checkout origin/branchname 
+checks out the branch from the server and switches to it. To create a
+branchname, type
+	git branch n1
+	git checkout n1
+Or in one step
+	git checkout -b n1
+
+** [checking out new branches] [new branches]
+When you run git fetch, it will fetch new branches from origin, but it won't
+automatically create a local copy for you. So you can merge into your master
+branch (say) using
+	git merge origin/newbranch
+And then push your local master to the newbranch if you please
+	git push origin/newbranch
+
+Or, you could create a local copy of the remote branch that tracks changes in
+the remote branch. That is, your local and remote branches are linked, when
+you do
+	git push
+it automatically synchronizes the appropriate branches. To do this,
+	git checkout -b newbranch origin/newbranch
+The -b switch creates the branch "newbranch" and then sets it to "track"
+origin/newbranch. (see progit 3-5).
+
+** [tracking]
+To do this whole new branch checking out from a remote server, there is an
+easy way of doing it:
+	git checkout --track origin/n1
+This is equivalent to saying, 
+	git checkout -b n1 origin/n1
+
+When you do a 
+	git clone origin
+its like saying
+	git checkout --track origin/master
+
+If you didn't clone a remote branch, and you need to set a local branch to track a remote branch, (say master and origin/master) do the following
+	git checkout master
+	git fetch
+	git branch --track origin/master
+and it will set the local branch to track the remote branch.
+
+** [pushing] [remote]
+	git push <remote> <from local branchname>:<to remote branch name>
+	git push origin commentmodule:commentmodule
+Or in short,
+	git push origin commentmodule
+will give the remote branch the same name as the local branch.
+
+** [delete remote] 
+To delete the remote branch "n1" after merging in to it's master (say), run
+	git push <remote> :n1
+(see progit 3-5)
+
+* [config]
+There are several configuration files located at 
+	/etc/gitconfig
+Write to this by typing
+	git config --system ...
+Also find a local
+	~/.gitconfig
+write to this by 
+	git config --global ...
+
+To list your config type
+	git config --list
+
+Commonly set options are
+	git config --global user.name "John Doe"
+	git config --global user.email johndoe@example.com
+	git config --global core.editor emacs
+A good merging tool is necessary when there are conflicts.
+	git config --global merge.tool vimdiff
+
+* [merging] [merge]
+Move to the branch you want to merge to; i.e., suppose you've fetched
+origin/master and its a few commits ahead. Do
+	git branch master
+	git merge origin/master
+And the master label will be moved ahead to match with origin/master. If
+branches have diverged, it will do it from a common ancestor.
+
+* [push]
+To push onto a server, do
+	git push origin branch1:branch2
+meaning, from branch1 to branch2, so really branch1 is allowed to have a
+different name, but I wouldn't recommend this. If you want to delete a remote
+branch, clearly
+	git push origin :branch2
+will delete branch2 remotely.
+
+* [tags]
+This is useful to give version numbers to commits. Should see (3-6) for this.
+Remember that tags have to be explicitly pushed to the server.
+
+* [auto complete]
+(3-7) contains information on how to use a bash completion type add on for
+git. You probably need to download the git source to be able to do this. 
+
+* [remote] [remotes]
+To list all remotes type
+	git remote add arjun@acces.cims.nyu.edu
+Note that public keys and identity file options cannot be specified from
+within git, so you ought to use ~/.ssh/config or /etc/ssh_config for that.
+	git remote -v
+lists all remotes
+	
+* [rm] [remove] [git rm]
+To remove tracked files use
+	git rm file.name
+however, this also removes your local copy of the files. Instead use,
+	git rm --cached file.nam
+which just removes it from the tracked list. To permanently ignore the file,
+use
+* [.gitignore] [ignore files]
+Just append to ~/.gitignore the line
+	file.name
+and it will ignore the file the next time you type
+	git status
+
+* [commit]
+Common options include 
+	-a automatically add files
+But it wont add new directories automatically.
+	-m "message"
+self explanatory
+	-v
+Verbose, to include a larger message with diffs and more details
+nano editor will open and ask for commit message. Type changes, save, and exit.
+
+** [commit --amend] [amend]
+The commit amend must be forced onto the server which prevents it from doing
+it normally. This is how it works:
+	git commit -m "added file.txt"
+but you've actually forgotten to add the file
+	git add file.txt
+added the file I've forgotten to add and amended the previous thing.
+	git commit --amend
+which just adds the file and retains the commit message
+	git push -f master origin/master
+	git push -f <from> <to>
+the 2nd line just explains the syntax.
+* [filename expansion] [escape character] [globbing]
+git does its own globbing for characters like *,? etc. so escape these as
+follows:
+	git rm docs/\*.log
+which removes all log files from the docs directory.
+
+[github]
+My password is my usual old standard nonspecific password, with special characterers and numbers.
+
+I've created keys in my .ssh folder called id_rsa_github to access the account. It's under account_settings > ssh_keys
+
+You can add collaborators individually for repositories. Just go under the repository and go to admin > collaborators. Collaborators can do push requests.
+
+[howto guide for first time users]
+
+I setup the document to work on, and wrote the Martingale argument down. It uses something called git so we can collaborate remotely and in sync.
+
+[Introduction] Git is a version control system for code (C Code, latex file, whatever). It allows other people to collaborate on a project. It keeps track of who made what changes, allows you to test ideas and much much more.
+
+Github is a site on which code repositories can be shared for free. To begin:
+1) Start here with a tutorial http://help.github.com/, install git on your computer (its preinstalled in school) and create an account by following the instructions in "Setup Git". This just allows you to use github. So you need an account, and you need to setup ssh keys so you can access github (a little terminal work with instructions in linux, a gui in windows).
+
+2) Now we must collaborate on code. This is how it works: There is one remote master copy of the latex file on github.com. You can make a local copy on your harddisk and modify it. Then you must "push" your changes to the remote repository; i.e., github.com.
+
+3) To give you access to the remote repository that I have created, SEND ME YOUR USERNAME as soon as you create your account so I can add you as a collaborator. Only then will you be able to modify the remote file.
+
+4) Once you have done this, go to http://help.github.com/ again and read "Fork a Repo". The repository that you will have to clone is github.com:arjunkc/Spencers_Maximum_Problem
+
+    git clone git@github.com:arjunkc/Spencers_Maximum_Problem 
+
+ and a new directory will have been created in your current directory. Move to it, and read all the files. Once you're done, you MUST send it back to the remote repository that you'll have access to.
+
+5) To begin testing, type
+cd Spencers_Maximum_Problem
+git remote add github git://github.com/arjunkc/Spencers_Maximum_Problem
+
+This tells your computer that there is a remote server, and it ought to synchronize with it (or something like that)
+
+Then open the README file, make changes to it, say, "Matan testing", save it and type
+  git commit -a -m "Matan trying to push"
+  git push github master
+
+To learn more about git (there's a lot you can do with it), please read github_help.txt in the repository. Let me know if you have any trouble.
+
+Arjun

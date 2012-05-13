@@ -1,0 +1,6 @@
+Please make latex files, compile and use them here. In the .gitignore file, I've excluded
+    log, aux, bbl, 
+
+and so on.
+
+The main file is Notes_maximum_process.tex and other tex files are inputted as starred sections.

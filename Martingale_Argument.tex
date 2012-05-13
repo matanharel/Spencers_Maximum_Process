@@ -1,0 +1,43 @@
+\section*{Martingale Argument for Concentration}
+The martingale argument is due to~\cite{lovett2012}. Consider $X_1(t), \ldots, X_n(t)$, $n$ simple random walks (SRWs) on $\mathbb{Z}$. There are $s$ stationary points and $m$ moving points at any instant; $m+s=n$. The top $s$ are frozen. We're interested in the maximum process $W(t)$:
+\begin{equation}
+  W(t) := \sup_{k \leq t} \sup_{i \leq n} \{ |X_i(k)| \}
+  \label{eq:max-process-defn}
+\end{equation}
+
+Let the filtration $\mathcal{F}_t$ be ``information about all the points up to time $t$. Then $X_i(t)$ is a martingale with respect to the filtration for each $i$ because,
+\begin{equation}
+  X_i(t) = X_i(t-1) + \left\{ 
+    \begin{array}{cc} 
+      0 & \textrm{if frozen} \\
+      \pm 1 & \textrm{with equal probability if moving}  
+    \end{array} \right.
+\end{equation}
+
+Let $T$ be the final time in the martingale, and Doob's inequality gives us,
+\begin{equation}
+  \Prob(\sup_{k \leq T} |X_i(k)| \geq a) \leq \int_{\sup_{k \leq T} |X_i(k)| \geq a} X_T d\Prob
+  \label{eq:doob-for-martingale}
+\end{equation}
+However, the $X_i$ are bounded by $1$ in absolute value, and Azuma's inequality gives us 
+\begin{equation}
+  \Prob(\sup_{k \leq T} |X_i(k)| \geq u\sqrt{T}) \leq 2 e^{-u^2/2}.
+  \label{eq:azuma-improving-doob}
+\end{equation}
+which is great. Now, define the random variable $Y$ as follows: 
+\begin{equation}
+  Y := \# \{i | \sup_{k \leq T} |X_i(k)| \geq u\sqrt{T} \}
+\end{equation}
+and its expectation is
+\begin{equation}
+  E[Y] = n 2 e^{-u^2/2}
+\end{equation} using~\Eqref{eq:azuma-improving-doob} and linearity over indicators. The following set inclusion is easy
+\begin{equation}
+  \{ W(T) \geq u\sqrt{T} + 1 \} \subset \{ Y \geq s+1 \}
+\end{equation}
+since one needs at least one point to be able to move when $s+1$ are at $u\sqrt{T}$ to be able to get to $u\sqrt{T}+1$. Then,
+\begin{equation}
+  \Prob (W(T) \geq u\sqrt{T} + 1) \leq \frac{n}{s+1} \exp(-u^2/2)
+  \label{eq:concentration-for-w}
+\end{equation}
+gives us concentration for fixed $n,s$. This tells us that we ought to keep $n/s$ constant if we're to send $n \to \infty$.
